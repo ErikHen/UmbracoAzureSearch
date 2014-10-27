@@ -1,0 +1,46 @@
+﻿@using System.Web.Mvc.Html
+@using Umbraco.Web
+@using UmbracoAzureSearch.Controllers
+@using UmbracoAzureSearch.Controllers
+@using UmbracoAzureSearch.Models
+@model UmbracoAzureSearch.Models.AzureSearchViewModel
+
+@{
+    //Html.EnableClientValidation(true);
+    Html.EnableUnobtrusiveJavaScript(true);
+}
+
+
+@using (Html.BeginUmbracoForm<AzureSearchSurfaceController>("HandleSearchForm"))
+{
+    @Html.ValidationSummary(true)
+    @Html.AntiForgeryToken()
+
+    @Html.TextBoxFor(model => model.SearchPhrase, new { id = "searchBox" })
+    <input type="submit" value="Search" />
+
+
+    if (Model.SearchResult != null)
+    {
+        foreach (var result in Model.SearchResult.value)
+        {
+            <div>
+                <h4>@(string.IsNullOrWhiteSpace(result.Title.ToString()) ? result.Name : result.Title)</h4>
+                @{
+                    string text = result.MainContent.ToString();
+                    if (text.Count() > 300)
+                    {
+                        text = text.Remove(300) + "...";
+                    }
+                }
+                @text<br/><br/>
+            </div>
+        }
+    }
+}
+
+<script>
+        $(function () {
+            $("#searchBox").autocomplete({ source: "/umbraco/AzureSearch/SearchApi/Suggest" });
+        });
+</script>

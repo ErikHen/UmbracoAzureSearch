@@ -1,0 +1,61 @@
+﻿<script>
+
+    function CustomSectionEditController($scope, $routeParams, $http) {
+        $scope.content = { tabs: [{ id: 1, label: "Index status" }, { id: 2, label: "Create index" }] };
+
+        $scope.CreateIndex = function () {
+            $http.get("/umbraco/backoffice/AzureSearch/IndexApi/createindex")
+                .success(function(response) {$scope.IndexCreatedMessage = response;});
+        };
+
+        $scope.GetIndexStatus = function () {
+            $http.get("/umbraco/backoffice/AzureSearch/IndexApi/getstatus")
+                .success(function (response) { $scope.IndexStatus = response; });
+
+        };
+    }
+
+    
+</script>
+
+<div ng-controller="CustomSectionEditController">
+
+    <umb-panel>
+        <umb-header tabs="content.tabs">
+            <div class="umb-headline-editor-wrapper span12 ng-scope">
+                <h1 class="ng-binding">Azure Search</h1>
+            </div>
+        </umb-header>
+
+        <umb-tab-view>
+
+            <umb-tab id="tab1" rel="foo">
+                <div class="umb-pane">
+                    <input id="Button1" type="button" value="Get index info" data-ng-click="GetIndexStatus()" /><br /><br />
+                    Current index definition:<br/>
+                    <table>
+                        <tr>
+                            <td ng-repeat="field in IndexStatus.Index.fields">
+                                <b>{{ field.name }}</b><br/> 
+                                {{ field.type }} <!-- Todo: more field info -->
+                            </td>
+                        </tr>
+                    </table>
+                    <br/>
+                    Documents in index: <span data-ng-bind="IndexStatus.Statistics.documentCount"></span><br/>
+                    Storage size: <span data-ng-bind="(IndexStatus.Statistics.storageSize/1000).toFixed()"></span> kb<br />
+                </div>
+            </umb-tab>
+
+            <umb-tab id="tab2" rel="bar">
+                <div class="umb-pane">
+
+                    <input id="Button1" type="button" value="Create search index" data-ng-click="CreateIndex()"/><br/>
+                    <span data-ng-bind="IndexCreatedMessage"></span>
+                    
+                </div>
+            </umb-tab>
+
+        </umb-tab-view>
+    </umb-panel>
+</div>
