@@ -158,4 +158,4 @@ $RECYCLE.BIN/
 # Ignore these too...
 *sln
 Web.config
-Settings.cs
+ UmbracoAzureSearch/App_Plugins/AzureSearch/Settings.cs
