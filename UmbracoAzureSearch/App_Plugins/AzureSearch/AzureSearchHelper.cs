@@ -167,7 +167,6 @@ namespace UmbracoAzureSearch.App_Plugins.AzureSearch
 
         public static void DeleteContentFromIndex(IEnumerable<IContent> deleteEntities)
         {
-            //TODO: Currently not working....
             var documentsJson = new StringBuilder();
             foreach (var content in deleteEntities.Take(1000)) //TODO: handle more than 1000 (do multiple service requests)
             {
@@ -187,7 +186,7 @@ namespace UmbracoAzureSearch.App_Plugins.AzureSearch
 
         public static string CreateDeleteDocumentJson(IContent content)
         {
-            string documentJson = "{ @search.action: delete, contentId: \"" + content.Id + "\" }";
+            string documentJson = "{ @search.action: \"delete\", contentId: \"" + content.Id + "\" }";
             return documentJson;
         }
 
