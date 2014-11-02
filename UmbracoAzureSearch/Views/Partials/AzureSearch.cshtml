@@ -10,6 +10,12 @@
     Html.EnableUnobtrusiveJavaScript(true);
 }
 
+<!--
+    Of course jqueryui shouldn't be inluded in this partial view. Just doing it to make it easier to try this code out.
+    jqueryui is used for the autocomplete function.
+    -->
+<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
 
 @using (Html.BeginUmbracoForm<AzureSearchSurfaceController>("HandleSearchForm"))
 {
@@ -25,15 +31,15 @@
         foreach (var result in Model.SearchResult.value)
         {
             <div>
-                <h4>@(string.IsNullOrWhiteSpace(result.Title.ToString()) ? result.Name : result.Title)</h4>
+                <h4><a href="@result.url">@(string.IsNullOrWhiteSpace(result.title.ToString()) ? result.name : result.title)</a></h4>
                 @{
-                    string text = result.MainContent.ToString();
+                    string text = result.mainContent.ToString();
                     if (text.Count() > 300)
                     {
                         text = text.Remove(300) + "...";
                     }
                 }
-                @text<br/><br/>
+                <a href="@result.url" style="text-decoration: none;">@text</a><br /><br />
             </div>
         }
     }
@@ -41,6 +47,6 @@
 
 <script>
         $(function () {
-            $("#searchBox").autocomplete({ source: "/umbraco/AzureSearch/SearchApi/Suggest" });
+            $("#searchBox").autocomplete({ source: "/umbraco/AzureSearch/SearchApi/Suggest", minLength: 3 });
         });
 </script>

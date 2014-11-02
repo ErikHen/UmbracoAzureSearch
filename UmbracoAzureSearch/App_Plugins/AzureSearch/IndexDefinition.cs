@@ -8,16 +8,21 @@ namespace UmbracoAzureSearch.App_Plugins.AzureSearch
         public IndexField[] Fields =
         { 
             //Adding the fields that the index will contain. 
-            new IndexField() { Name = "ContentId", Key = true, Searchable = false},
-            new IndexField() { Name = "ContentType", Searchable = false},
-            new IndexField() { Name = "Name", Suggestions = true},
-            new IndexField() { Name = "Url", Searchable = false, Filterable = false, Sortable = false, Facetable = false},
-            new IndexField() { Name = "Title", Suggestions = true, UmbracoProperty = "title"},
-            new IndexField() { Name = "SubHeading", UmbracoProperty = "subheader"},
-            new IndexField() { Name = "MainContent", UmbracoProperty = "bodyText"},
+            new IndexField() { Name = "contentId", Key = true, Searchable = false},
+            new IndexField() { Name = "contentType", Searchable = false},
+            new IndexField() { Name = "name", Suggestions = true},
+            new IndexField() { Name = "url", Searchable = false, Filterable = false, Sortable = false, Facetable = false},
+            new IndexField() { Name = "title", Suggestions = true, UmbracoProperty = "title"},
+            new IndexField() { Name = "subHeading", UmbracoProperty = "subheader"},
+            new IndexField() { Name = "mainContent", UmbracoProperty = "bodyText"},
         };
 
-        ////TODO: Scoring profile that boosts "Name" and "Title"
+        //Scoring profile that boosts "Name" and "Title"
+        public object[] ScoringProfiles = { new
+        {
+            Name = "boostNameAndTitle",
+            Text = new { Weights = new { Name = 3, Title = 2 }}
+        }};
     }
 
     public class IndexField

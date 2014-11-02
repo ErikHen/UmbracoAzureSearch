@@ -9,11 +9,9 @@ namespace UmbracoAzureSearch.App_Plugins.AzureSearch
     public class SearchApiController : UmbracoApiController
     {
         [HttpGet]
-        public List<string> Suggest(string searchPhrase)
+        public List<string> Suggest(string term)
         {
-           return AzureSearchHelper.Suggest(searchPhrase);
+           return AzureSearchHelper.Suggest(term);
         }
-
-     
     }
 }

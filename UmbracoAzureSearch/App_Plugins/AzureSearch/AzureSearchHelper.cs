@@ -111,7 +111,7 @@ namespace UmbracoAzureSearch.App_Plugins.AzureSearch
         public static string CreateIndex()
         {
             //Some changes are possible to do to an existing index, but others need a complete whipe of index first.
-            //DeleteIndex();
+            DeleteIndex();
             
             var uri = new Uri(Settings.ServiceUri, "/indexes/" + Settings.IndexName);
             string json = AzureSearchHelper.SerializeJson(new IndexDefinition());
@@ -157,15 +157,17 @@ namespace UmbracoAzureSearch.App_Plugins.AzureSearch
             var uri = new Uri(Settings.ServiceUri, "/indexes/" + Settings.IndexName + "/docs/index");
             HttpResponseMessage response = AzureSearchHelper.SendSearchRequest(HttpMethod.Post, uri, json);
 
+            //TODO: The response can be "partial success". Some docs have been indexed, but others have failed. Needs to be handled(?).
             //if (!response.IsSuccessStatusCode)
             //{
             //    //TODO: Log this or something string error = response.Content == null ? null : response.Content.ReadAsStringAsync().Result;
             //}
             
-        }
+            }
 
         public static void DeleteContentFromIndex(IEnumerable<IContent> deleteEntities)
         {
+            //TODO: Currently not working....
             var documentsJson = new StringBuilder();
             foreach (var content in deleteEntities.Take(1000)) //TODO: handle more than 1000 (do multiple service requests)
             {
@@ -185,16 +187,16 @@ namespace UmbracoAzureSearch.App_Plugins.AzureSearch
 
         public static string CreateDeleteDocumentJson(IContent content)
         {
-            string documentJson = "{ @search.action: delete, ContentID: \"" + content.Id + "\" }";
+            string documentJson = "{ @search.action: delete, contentId: \"" + content.Id + "\" }";
             return documentJson;
         }
 
         public static string CreateUploadDocumentJson(IContent content, IndexField[] indexFields)
         {
-            string documentJson = "{ ContentId: \"" + content.Id + "\"," +
-                                  "Name: \"" + content.Name + "\"," +
-                                  "ContentType: \"" + content.ContentType.Alias + "\"," +
-                                  "Url: \"" + new UmbracoHelper().NiceUrl(content.Id) + "\",";
+            string documentJson = "{ contentId: \"" + content.Id + "\"," +
+                                  "name: \"" + content.Name + "\"," +
+                                  "contentType: \"" + content.ContentType.Alias + "\"," +
+                                  "url: \"" + new UmbracoHelper().NiceUrl(content.Id) + "\",";
 
             //The index fields specifies which properties that should be indexed 
             var fieldsThatMapToAnUmbracoProperty = indexFields.Where(f => !string.IsNullOrEmpty(f.UmbracoProperty));
@@ -226,6 +228,7 @@ namespace UmbracoAzureSearch.App_Plugins.AzureSearch
             //string paging = "&$top=10";
             //string filter = BuildFilter(color, category, priceFrom, priceTo);
             //string orderby = BuildSort(sort);
+            //TODO: start using scoring profile
 
             var uri = new Uri(Settings.ServiceUri, "/indexes/" + Settings.IndexName + "/docs?$count=false" + search);
             HttpResponseMessage response = SendSearchRequest(HttpMethod.Get, uri);
@@ -244,7 +247,7 @@ namespace UmbracoAzureSearch.App_Plugins.AzureSearch
             var options = new List<string>();
             foreach (var option in result.value)
             {
-                options.Add((string)option["@search.text"] + " (" + (string)option["ContentId"] + ")");
+                options.Add((string)option["@search.text"]);
             }
 
             return options;
