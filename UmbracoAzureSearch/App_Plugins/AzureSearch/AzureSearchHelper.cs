@@ -111,7 +111,7 @@ namespace UmbracoAzureSearch.App_Plugins.AzureSearch
         public static string CreateIndex()
         {
             //Some changes are possible to do to an existing index, but others need a complete whipe of index first.
-            DeleteIndex();
+            //DeleteIndex();
             
             var uri = new Uri(Settings.ServiceUri, "/indexes/" + Settings.IndexName);
             string json = AzureSearchHelper.SerializeJson(new IndexDefinition());
@@ -127,7 +127,6 @@ namespace UmbracoAzureSearch.App_Plugins.AzureSearch
 
         private static bool DeleteIndex()
         {
-
             var uri = new Uri(Settings.ServiceUri, "/indexes/" + Settings.IndexName);
             HttpResponseMessage response = AzureSearchHelper.SendSearchRequest(HttpMethod.Delete, uri);
             if (response.StatusCode == HttpStatusCode.NotFound)
@@ -225,8 +224,6 @@ namespace UmbracoAzureSearch.App_Plugins.AzureSearch
             string search = "&search=" + Uri.EscapeDataString(searchPhrase);
             //string facets = "&facet=color&facet=categoryName&facet=listPrice,values:10|25|100|500|1000|2500";
             //string paging = "&$top=10";
-            //string filter = BuildFilter(color, category, priceFrom, priceTo);
-            //string orderby = BuildSort(sort);
             //TODO: start using scoring profile
 
             var uri = new Uri(Settings.ServiceUri, "/indexes/" + Settings.IndexName + "/docs?$count=false" + search);
@@ -236,17 +233,17 @@ namespace UmbracoAzureSearch.App_Plugins.AzureSearch
             return DeserializeJson<dynamic>(response.Content.ReadAsStringAsync().Result);
         }
 
-        public static List<string> Suggest(string searchPhrase)
+        public static List<object> Suggest(string searchPhrase)
         {
-            var uri = new Uri(Settings.ServiceUri, "/indexes/" + Settings.IndexName + "/docs/suggest?fuzzy=true&search=" + Uri.EscapeDataString(searchPhrase));
+            var uri = new Uri(Settings.ServiceUri, "/indexes/" + Settings.IndexName + "/docs/suggest?fuzzy=true&$select=url&search=" + Uri.EscapeDataString(searchPhrase));
             HttpResponseMessage response = AzureSearchHelper.SendSearchRequest(HttpMethod.Get, uri);
             EnsureSuccessfulSearchResponse(response);
 
             var result = DeserializeJson<dynamic>(response.Content.ReadAsStringAsync().Result);
-            var options = new List<string>();
+            var options = new List<object>();
             foreach (var option in result.value)
             {
-                options.Add((string)option["@search.text"]);
+                options.Add(new { label = (string)option["@search.text"], value = (string)option["url"] }); //quick & dirty camelCasing of "label" and "value" when returned by Web API...
             }
 
             return options;

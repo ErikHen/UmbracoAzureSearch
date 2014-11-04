@@ -6,7 +6,6 @@
 @model UmbracoAzureSearch.Models.AzureSearchViewModel
 
 @{
-    //Html.EnableClientValidation(true);
     Html.EnableUnobtrusiveJavaScript(true);
 }
 
@@ -47,6 +46,10 @@
 
 <script>
         $(function () {
-            $("#searchBox").autocomplete({ source: "/umbraco/AzureSearch/SearchApi/Suggest", minLength: 3 });
+            $("#searchBox").autocomplete({
+                source: "/umbraco/AzureSearch/SearchApi/Suggest",
+                minLength: 3,
+                select: function (event, ui) { location.href = ui.item.value; }
+            });
         });
 </script>

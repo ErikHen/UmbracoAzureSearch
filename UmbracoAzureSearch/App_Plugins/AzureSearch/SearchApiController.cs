@@ -5,11 +5,12 @@ using Umbraco.Web.WebApi;
 
 namespace UmbracoAzureSearch.App_Plugins.AzureSearch
 {
-    [PluginController("AzureSearch")]
+    //The route for this controller: /umbraco/AzureSearch/SearchApi/{action}
+    [PluginController("AzureSearch")] 
     public class SearchApiController : UmbracoApiController
     {
         [HttpGet]
-        public List<string> Suggest(string term)
+        public List<object> Suggest(string term)
         {
            return AzureSearchHelper.Suggest(term);
         }
