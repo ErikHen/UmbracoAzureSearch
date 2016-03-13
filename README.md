@@ -27,8 +27,5 @@ Now you're ready to start using it
 * Publish all pages to have them sent to the search service for indexing.
 * Go to a page where you added the rendering of the search form and search for something.
 
-## Help wanted
-I'm not super experienced in Umbraco or MVC. This is my first encounter with Angular.js, and my first GitHub project... So any comments or help of any kind is greatly appreciated.
-
 ## Disclaimer
-This code is not function complete or well tested, and has never been near a production environment. The indexing currently only works with one language (english), multilanguage support will come, according to Microsoft.
+This code is not function complete or well tested, and has never been near a production environment. 
